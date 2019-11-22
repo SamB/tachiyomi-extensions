@@ -1,8 +1,13 @@
 new File(rootDir, "src").eachDir { dir ->
-    dir.eachDir { subdir ->
-        String name = ":${dir.name}-${subdir.name}"
+    dir.eachDir { subDir ->
+        File buildGradle = new File(subDir, 'build.gradle')
+        if (!buildGradle.exists()) {
+            logger.warn("File not found: ${rootDir.relativePath(buildGradle)} -- Not including project.")
+            return
+        }
+        String name = ":${dir.name}-${subDir.name}"
         include name
-        project(name).projectDir = new File("src/${dir.name}/${subdir.name}")
+        project(name).projectDir = new File("src/${dir.name}/${subDir.name}")
     }
 }
 
